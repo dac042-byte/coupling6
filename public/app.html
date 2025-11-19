@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coupling - App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="theme-toggle">
+    <button id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <div class="app-container">
+    <!-- Navigation -->
+    <nav class="app-nav">
+      <div class="nav-logo">
+        <h2>💜 Coupling</h2>
+      </div>
+      <div class="nav-items">
+        <button class="nav-item active" data-view="discover">
+          <span class="nav-icon">🔍</span>
+          <span>Discover</span>
+        </button>
+        <button class="nav-item" data-view="matches">
+          <span class="nav-icon">💬</span>
+          <span>Matches</span>
+        </button>
+        <button class="nav-item" data-view="profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </button>
+      </div>
+      <button class="btn-secondary" onclick="signout()">Sign Out</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Discover View -->
+      <div id="discoverView" class="view active">
+        <div class="swipe-container">
+          <div id="cardStack" class="card-stack">
+            <div class="no-more-cards" id="noMoreCards" style="display: none;">
+              <h2>No more matches</h2>
+              <p>Check back later for new potential collaborators!</p>
+            </div>
+          </div>
+
+          <div class="swipe-buttons" id="swipeButtons">
+            <button class="swipe-btn swipe-left" onclick="swipe('left')">
+              <span>✕</span>
+            </button>
+            <button class="swipe-btn swipe-right" onclick="swipe('right')">
+              <span>♥</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matches View -->
+      <div id="matchesView" class="view">
+        <div class="matches-container">
+          <h2>Your Matches</h2>
+          <div id="matchesList" class="matches-list">
+            <div class="loading">Loading matches...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="profileView" class="view">
+        <div class="profile-container">
+          <h2>Your Profile</h2>
+          <div id="profileContent" class="profile-content">
+            <div class="loading">Loading profile...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat View -->
+      <div id="chatView" class="view">
+        <div class="chat-container">
+          <div class="chat-header">
+            <button class="back-btn" onclick="showView('matches')">← Back</button>
+            <h3 id="chatUserName"></h3>
+          </div>
+          <div id="messagesList" class="messages-list"></div>
+          <div class="message-input">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Match Modal -->
+  <div id="matchModal" class="modal">
+    <div class="modal-content match-modal">
+      <h2>It's a Match! 🎉</h2>
+      <p>You can now start chatting!</p>
+      <button class="btn-primary" onclick="closeMatchModal()">Continue Swiping</button>
+      <button class="btn-secondary" onclick="goToMatches()">View Matches</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

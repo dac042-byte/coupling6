@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Coupling</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="theme-toggle">
+    <button id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-card signup-card">
+      <div class="logo">
+        <h1>💜 Coupling</h1>
+        <p class="tagline">Join the community</p>
+      </div>
+
+      <form id="signupForm" class="auth-form">
+        <h2>Create Account</h2>
+
+        <!-- Basic Info -->
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="you@university.edu">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="••••••••" minlength="6">
+        </div>
+
+        <!-- User Type -->
+        <div class="form-group">
+          <label for="userType">I am a...</label>
+          <select id="userType" name="userType" required>
+            <option value="">Select type</option>
+            <option value="technical">Technical Student (Engineer/Developer)</option>
+            <option value="non-technical">Non-Technical Student (Idea Maker)</option>
+          </select>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <label for="country">Country</label>
+          <input type="text" id="country" name="country" required placeholder="United States">
+        </div>
+
+        <div class="form-group">
+          <label for="university">University</label>
+          <input type="text" id="university" name="university" required placeholder="Stanford University">
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Bio (Optional)</label>
+          <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+        </div>
+
+        <!-- Technical Profile Fields -->
+        <div id="technicalFields" style="display: none;">
+          <h3>Technical Profile</h3>
+
+          <div class="form-group">
+            <label for="skills">Skills</label>
+            <textarea id="skills" name="skills" rows="2" placeholder="e.g., React, Node.js, Python, Machine Learning"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="previousProjects">Previous Projects</label>
+            <textarea id="previousProjects" name="previousProjects" rows="3" placeholder="Describe your past projects and experience..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="githubUrl">GitHub URL (Optional)</label>
+            <input type="url" id="githubUrl" name="githubUrl" placeholder="https://github.com/username">
+          </div>
+
+          <div class="form-group">
+            <label for="portfolioUrl">Portfolio URL (Optional)</label>
+            <input type="url" id="portfolioUrl" name="portfolioUrl" placeholder="https://yourportfolio.com">
+          </div>
+        </div>
+
+        <!-- Non-Technical Profile Fields -->
+        <div id="nonTechnicalFields" style="display: none;">
+          <h3>Your Project Idea</h3>
+
+          <div class="form-group">
+            <label for="ideaTitle">Project Title</label>
+            <input type="text" id="ideaTitle" name="ideaTitle" placeholder="e.g., Food Delivery App for Campus">
+          </div>
+
+          <div class="form-group">
+            <label for="ideaDescription">Project Description</label>
+            <textarea id="ideaDescription" name="ideaDescription" rows="4" placeholder="Describe your idea in detail..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="timeline">Timeline</label>
+            <textarea id="timeline" name="timeline" rows="3" placeholder="e.g., Week 1-2: Design, Week 3-4: Development, Week 5-6: Testing"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="equityOffered">Equity/Compensation Offered</label>
+            <input type="text" id="equityOffered" name="equityOffered" placeholder="e.g., 20% equity, or Free/Portfolio building">
+          </div>
+
+          <div class="form-group">
+            <label for="budget">Budget (Optional)</label>
+            <input type="text" id="budget" name="budget" placeholder="e.g., $500 for hosting">
+          </div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <button type="submit" class="btn-primary">Create Account</button>
+
+        <div class="auth-footer">
+          <p>Already have an account? <a href="/">Sign in</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Check theme preference
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon();
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const icon = document.querySelector('.theme-icon');
+      icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // Show/hide profile fields based on user type
+    document.getElementById('userType').addEventListener('change', (e) => {
+      const userType = e.target.value;
+      const technicalFields = document.getElementById('technicalFields');
+      const nonTechnicalFields = document.getElementById('nonTechnicalFields');
+
+      if (userType === 'technical') {
+        technicalFields.style.display = 'block';
+        nonTechnicalFields.style.display = 'none';
+        // Make technical fields required
+        document.getElementById('skills').required = true;
+        document.getElementById('previousProjects').required = true;
+        // Make non-technical fields optional
+        document.getElementById('ideaTitle').required = false;
+        document.getElementById('ideaDescription').required = false;
+        document.getElementById('timeline').required = false;
+      } else if (userType === 'non-technical') {
+        technicalFields.style.display = 'none';
+        nonTechnicalFields.style.display = 'block';
+        // Make non-technical fields required
+        document.getElementById('ideaTitle').required = true;
+        document.getElementById('ideaDescription').required = true;
+        document.getElementById('timeline').required = true;
+        // Make technical fields optional
+        document.getElementById('skills').required = false;
+        document.getElementById('previousProjects').required = false;
+      } else {
+        technicalFields.style.display = 'none';
+        nonTechnicalFields.style.display = 'none';
+      }
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        name: document.getElementById('name').value,
+        userType: document.getElementById('userType').value,
+        country: document.getElementById('country').value,
+        university: document.getElementById('university').value,
+        bio: document.getElementById('bio').value,
+      };
+
+      // Add type-specific fields
+      if (formData.userType === 'technical') {
+        formData.skills = document.getElementById('skills').value;
+        formData.previousProjects = document.getElementById('previousProjects').value;
+        formData.githubUrl = document.getElementById('githubUrl').value;
+        formData.portfolioUrl = document.getElementById('portfolioUrl').value;
+      } else {
+        formData.ideaTitle = document.getElementById('ideaTitle').value;
+        formData.ideaDescription = document.getElementById('ideaDescription').value;
+        formData.timeline = document.getElementById('timeline').value;
+        formData.equityOffered = document.getElementById('equityOffered').value;
+        formData.budget = document.getElementById('budget').value;
+      }
+
+      const errorMessage = document.getElementById('errorMessage');
+
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          window.location.href = '/app';
+        } else {
+          errorMessage.textContent = data.error || 'Sign up failed';
+          errorMessage.style.display = 'block';
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Network error. Please try again.';
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

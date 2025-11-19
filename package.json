@@ -1,0 +1,21 @@
+{
+  "name": "coupling-marketplace",
+  "version": "1.0.0",
+  "description": "A Tinder-like marketplace connecting technical and non-technical students",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["marketplace", "student", "matching", "collaboration"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^9.2.2",
+    "socket.io": "^4.6.1",
+    "body-parser": "^1.20.2"
+  }
+}
