@@ -16,7 +16,7 @@ A Tinder-like matching platform that connects technical students with non-techni
 ## Tech Stack
 
 - **Backend**: Node.js, Express, Socket.IO
-- **Database**: SQLite with better-sqlite3
+- **Database**: SQLite with sqlite3
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
 - **Authentication**: Session-based with bcrypt password hashing
 - **Real-time**: Socket.IO for instant messaging

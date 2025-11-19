@@ -1,7 +1,26 @@
-const Database = require('better-sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 
-const db = new Database('coupling.db');
+const db = new sqlite3.Database('coupling.db');
+
+// Promisify database methods
+const dbRun = (sql, ...params) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
+};
+
+const dbGet = (sql, ...params) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
 
 async function seed() {
   console.log('Seeding database with placeholder users...');
@@ -136,12 +155,9 @@ async function seed() {
   try {
     // Insert technical users
     for (const user of technicalUsers) {
-      const insertUser = db.prepare(`
-        INSERT INTO users (email, password, name, user_type, country, university, bio)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      const result = insertUser.run(
+      const result = await dbRun(
+        `INSERT INTO users (email, password, name, user_type, country, university, bio)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         user.email,
         hashedPassword,
         user.name,
@@ -151,13 +167,10 @@ async function seed() {
         user.bio
       );
 
-      const insertTech = db.prepare(`
-        INSERT INTO technical_profiles (user_id, skills, previous_projects, github_url, portfolio_url)
-        VALUES (?, ?, ?, ?, ?)
-      `);
-
-      insertTech.run(
-        result.lastInsertRowid,
+      await dbRun(
+        `INSERT INTO technical_profiles (user_id, skills, previous_projects, github_url, portfolio_url)
+         VALUES (?, ?, ?, ?, ?)`,
+        result.lastID,
         user.skills,
         user.previousProjects,
         user.githubUrl || '',
@@ -169,12 +182,9 @@ async function seed() {
 
     // Insert non-technical users
     for (const user of nonTechnicalUsers) {
-      const insertUser = db.prepare(`
-        INSERT INTO users (email, password, name, user_type, country, university, bio)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      const result = insertUser.run(
+      const result = await dbRun(
+        `INSERT INTO users (email, password, name, user_type, country, university, bio)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         user.email,
         hashedPassword,
         user.name,
@@ -184,13 +194,10 @@ async function seed() {
         user.bio
       );
 
-      const insertNonTech = db.prepare(`
-        INSERT INTO non_technical_profiles (user_id, idea_title, idea_description, timeline, equity_offered, budget)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `);
-
-      insertNonTech.run(
-        result.lastInsertRowid,
+      await dbRun(
+        `INSERT INTO non_technical_profiles (user_id, idea_title, idea_description, timeline, equity_offered, budget)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        result.lastID,
         user.ideaTitle,
         user.ideaDescription,
         user.timeline,
