@@ -22,7 +22,83 @@ const dbGet = (sql, ...params) => {
   });
 };
 
+const dbExec = (sql) => {
+  return new Promise((resolve, reject) => {
+    db.exec(sql, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+};
+
 async function seed() {
+  console.log('Creating database tables...');
+
+  // Create tables first
+  await dbExec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      name TEXT NOT NULL,
+      user_type TEXT NOT NULL CHECK(user_type IN ('technical', 'non-technical')),
+      country TEXT NOT NULL,
+      university TEXT NOT NULL,
+      bio TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS technical_profiles (
+      user_id INTEGER PRIMARY KEY,
+      skills TEXT,
+      previous_projects TEXT,
+      github_url TEXT,
+      portfolio_url TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS non_technical_profiles (
+      user_id INTEGER PRIMARY KEY,
+      idea_title TEXT NOT NULL,
+      idea_description TEXT NOT NULL,
+      timeline TEXT NOT NULL,
+      equity_offered TEXT,
+      budget TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS swipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      swiper_id INTEGER NOT NULL,
+      swiped_id INTEGER NOT NULL,
+      direction TEXT NOT NULL CHECK(direction IN ('left', 'right')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(swiper_id, swiped_id),
+      FOREIGN KEY (swiper_id) REFERENCES users(id),
+      FOREIGN KEY (swiped_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS matches (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user1_id INTEGER NOT NULL,
+      user2_id INTEGER NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user1_id, user2_id),
+      FOREIGN KEY (user1_id) REFERENCES users(id),
+      FOREIGN KEY (user2_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      match_id INTEGER NOT NULL,
+      sender_id INTEGER NOT NULL,
+      content TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (match_id) REFERENCES matches(id),
+      FOREIGN KEY (sender_id) REFERENCES users(id)
+    );
+  `);
+
   console.log('Seeding database with placeholder users...');
 
   const hashedPassword = await bcrypt.hash('password123', 10);
